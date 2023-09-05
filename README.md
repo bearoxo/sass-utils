@@ -1,2 +1,2 @@
 # Sass Utils
-A library of Sass classes, functions, mixins, and other utilities.
+A library of Sass classes, maps, functions, mixins, and other utilities.
