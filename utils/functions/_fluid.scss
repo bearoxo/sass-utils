@@ -1,23 +1,16 @@
+@use "sass:map";
+@use "sass:math";
+@use "./round";
+@use "../../tokens/fonts";
+
 // Fluid font-size = (Font Base Size (1rem) x (Typescale ^ Scale Step)) + (Size Adjustment)
 @function fn-fluid-fs($font-typescale, $scale-step: 0, $size-adjust: 0px) {
   @if type-of($font-typescale) == string {
-    $font-typescales: (
-      "minorSecond": 1.067,
-      "majorSecond": 1.125,
-      "minorThird": 1.2,
-      "majorThird": 1.25,
-      "perfectFourth": 1.333,
-      "augmentedFourth": 1.414,
-      "perfectFifth": 1.5,
-      "minorSixth": 1.6,
-      "goldenRatio": 1.618,
-      "majorSixth": 1.667,
-    );
-    $font-typescale: map.get($font-typescales, $font-typescale);
+    $font-typescale: map.get(fonts.$typescales, $font-typescale);
   }
-  $font-scaled: round-decimals(1rem * math.pow($font-typescale, $scale-step), 4);
+  $font-scaled: round.decimals(1rem * math.pow($font-typescale, $scale-step), 4);
   @if unit($size-adjust) == "px" {
-    $size-adjust: round-decimals(calc($size-adjust/16px * 1rem), 4);
+    $size-adjust: round.decimals(calc($size-adjust/16px * 1rem), 4);
   }
   $font-size: $font-scaled + $size-adjust;
   @return $font-size
