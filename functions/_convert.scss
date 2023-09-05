@@ -1,0 +1,28 @@
+@use "sass:math";
+@use "sass:map";
+
+@function convert-unitless($value) {
+  @if type-of($value) != "number" {
+    @error "#{$value} is an invalid value. Value must be a number."
+  }
+  @if not unitless($value)  {
+    $value: math.div($value, $value * 0 + 1);
+  } 
+  @return $value;
+}
+
+@function convert-unit($value, $unit) {
+  @if type-of($value) != "number" {
+    @error "#{$value} is an invalid value. Value must be a number."
+  }
+  @if type-of($unit) != "number" or unitless($unit) == true {
+    @error "#{$unit} is an invalid value. Unit must be a unitless number."
+  }
+  @if unitless($value) == true {
+    $value: $value * math.div($unit, convert-unitless($unit));
+  } @else {
+    $value: convert-unitless($value);
+    $value: $value * math.div($unit, convert-unitless($unit));
+  } 
+  @return $value;
+}
