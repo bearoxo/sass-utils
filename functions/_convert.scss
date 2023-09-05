@@ -1,6 +1,7 @@
 @use "sass:math";
 @use "sass:map";
 
+
 @function convert-unitless($value) {
   @if type-of($value) != "number" {
     @error "#{$value} is an invalid value. Value must be a number."
@@ -12,17 +13,37 @@
 }
 
 @function convert-unit($value, $unit) {
+  $unit-conversion-factors: (
+    "in": 1,
+    "cm": 2.54,
+    "mm": 25.4,
+    "pt": 72,
+    "pc": 6,
+    "px": 96,
+    "%": 600,
+    "rem": 6,
+    "em": 6,
+  );
   @if type-of($value) != "number" {
     @error "#{$value} is an invalid value. Value must be a number."
+  }
+  @if unitless($value) == false and map.has-key($unit-conversion-factors, unit($value)) == false {
+    @error "#{$value} is an invalid unit."
   }
   @if type-of($unit) != "number" or unitless($unit) == true {
     @error "#{$unit} is an invalid value. Unit must be a unitless number."
   }
+  @if map.has-key($unit-conversion-factors, unit($unit)) == false {
+    @error "#{$unit} is an invalid unit."
+  }
+
+  $valueUnit: unit($value);
   @if unitless($value) == true {
     $value: $value * math.div($unit, convert-unitless($unit));
-  } @else {
-    $value: convert-unitless($value);
-    $value: $value * math.div($unit, convert-unitless($unit));
-  } 
+  } @else if $valueUnit != unit($unit) {
+    $value-inch: math.div(convert-unitless($value), map.get($unit-conversion-factors, $valueUnit));
+    $value-unit: $value-inch * map.get($unit-conversion-factors, unit($unit));
+    $value: $value-unit * math.div($unit, convert-unitless($unit));
+  }
   @return $value;
 }
